@@ -9,8 +9,6 @@ const quotes = [
   "The only way to learn mathematics is to do mathematics.",
 ]
 
-const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-
 function getGreeting() {
   const h = new Date().getHours()
   if (h < 12) return 'Good morning'
@@ -83,10 +81,8 @@ export default function Dashboard() {
   const [streak] = useState(7)
   const [selectedPlan, setSelectedPlan] = useState(null)
   const [weakPopup, setWeakPopup] = useState(null)
-  const [showConfetti, setShowConfetti] = useState(false)
   const [toast, setToast] = useState(null)
   const [quote] = useState(quotes[Math.floor(Math.random() * quotes.length)])
-  const [activePage, setActivePage] = useState('dashboard')
 
   const currentLevel = xpLevels.find(l => xp >= l.min && xp < l.max) || xpLevels[3]
   const xpProgress = ((xp - currentLevel.min) / (currentLevel.max - currentLevel.min)) * 100
@@ -110,13 +106,15 @@ export default function Dashboard() {
   const sidebar = d ? '#0d0d0d' : '#f5f4f0'
 
   const navItems = [
-    { id: 'dashboard', icon: '⊞', label: 'Dashboard' },
-    { id: 'plans', icon: '📅', label: 'Study Plans' },
-    { id: 'tutor', icon: '💬', label: 'AI Tutor' },
-    { id: 'tests', icon: '📝', label: 'Tests' },
-    { id: 'progress', icon: '📈', label: 'Progress' },
-    { id: 'upload', icon: '⬆', label: 'Upload' },
+    { id: 'dashboard', icon: '⊞', label: 'Dashboard', href: '/dashboard' },
+    { id: 'plans', icon: '📅', label: 'Study Plans', href: '/plan' },
+    { id: 'tutor', icon: '💬', label: 'AI Tutor', href: '/tutor' },
+    { id: 'tests', icon: '📝', label: 'Tests', href: '/tests' },
+    { id: 'progress', icon: '📈', label: 'Progress', href: '/progress' },
+    { id: 'upload', icon: '⬆', label: 'Upload', href: '/upload' },
   ]
+
+  const currentPage = 'dashboard'
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: bg, fontFamily: "'Syne',sans-serif", color: text, transition: 'all 0.3s' }}>
@@ -124,10 +122,8 @@ export default function Dashboard() {
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
         *{box-sizing:border-box;margin:0;padding:0}
         @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes slideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
         @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-        @keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
         .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;cursor:pointer;transition:all 0.2s;font-size:13px;font-weight:500;color:${muted};letter-spacing:0.02em;text-decoration:none}
         .nav-item:hover{background:${bg3};color:${text}}
         .nav-item.active{background:rgba(200,247,90,0.1);color:${accent}}
@@ -143,17 +139,15 @@ export default function Dashboard() {
         .progress-bar{height:4px;background:${bg3};border-radius:2px;overflow:hidden}
         .progress-fill{height:100%;border-radius:2px;transition:width 1s ease}
         .mono{font-family:'DM Mono',monospace}
-        .tag{display:inline-block;font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;letter-spacing:0.06em;text-transform:uppercase}
         ::-webkit-scrollbar{width:4px}
         ::-webkit-scrollbar-track{background:${bg}}
         ::-webkit-scrollbar-thumb{background:${border2};border-radius:2px}
         .fade{animation:fadeIn 0.6s cubic-bezier(0.16,1,0.3,1) forwards}
-        .slide{animation:slideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards}
       `}</style>
 
       {/* TOAST */}
       {toast && (
-        <div style={{ position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', background: bg2, border: `1px solid ${border2}`, borderRadius: 8, padding: '0.75rem 1.5rem', fontSize: 14, color: text, zIndex: 1000, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', animation: 'toastIn 0.4s ease forwards', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', background: bg2, border: `1px solid ${border2}`, borderRadius: 8, padding: '0.75rem 1.5rem', fontSize: 14, color: text, zIndex: 1000, boxShadow: '0 8px 32px rgba(0,0,0,0.4)', animation: 'toastIn 0.4s ease forwards' }}>
           {toast}
         </div>
       )}
@@ -171,7 +165,7 @@ export default function Dashboard() {
             </div>
             <div style={{ background: bg3, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
               <p style={{ fontSize: 13, color: muted, lineHeight: 1.7 }}>
-                You need <strong style={{ color: accent }}>80% mastery</strong> to advance to the next chapter. You're currently at <strong style={{ color: getMasteryColor(weakPopup.mastery) }}>{weakPopup.mastery}%</strong>.
+                You need <strong style={{ color: accent }}>80% mastery</strong> to advance. Currently at <strong style={{ color: getMasteryColor(weakPopup.mastery) }}>{weakPopup.mastery}%</strong>.
               </p>
             </div>
             <div style={{ marginBottom: '1.25rem' }}>
@@ -184,7 +178,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={() => setWeakPopup(null)}>Practice this topic →</button>
+              <button className="btn-primary" style={{ flex: 1 }} onClick={() => { setWeakPopup(null); window.location.href = '/tutor' }}>Practice this topic →</button>
               <button className="btn-ghost" onClick={() => setWeakPopup(null)}>Later</button>
             </div>
           </div>
@@ -199,14 +193,14 @@ export default function Dashboard() {
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
           {navItems.map(item => (
-            <div key={item.id} className={`nav-item${activePage === item.id ? ' active' : ''}`} onClick={() => setActivePage(item.id)}>
+            <a key={item.id} href={item.href} className={`nav-item${currentPage === item.id ? ' active' : ''}`}>
               <span style={{ fontSize: 16 }}>{item.icon}</span>
               <span>{item.label}</span>
-            </div>
+            </a>
           ))}
         </div>
 
-        {/* XP card in sidebar */}
+        {/* XP card */}
         <div style={{ background: bg3, border: `1px solid ${border}`, borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace", letterSpacing: '0.06em' }}>{currentLevel.name.toUpperCase()}</span>
@@ -215,21 +209,21 @@ export default function Dashboard() {
           <div className="progress-bar" style={{ marginBottom: 6 }}>
             <div className="progress-fill" style={{ width: `${xpProgress}%`, background: accent }} />
           </div>
-          <p style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace" }}>{currentLevel.max - xp} XP to {xpLevels[xpLevels.indexOf(currentLevel) + 1]?.name || 'Max'}</p>
+          <p style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace" }}>{xpLevels[xpLevels.indexOf(currentLevel) + 1]?.min - xp} XP to {xpLevels[xpLevels.indexOf(currentLevel) + 1]?.name}</p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
             <div style={{ width: 28, height: 28, borderRadius: '50%', background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#080808' }}>A</div>
             <span style={{ fontSize: 13, color: text, fontWeight: 500 }}>Aden</span>
-          </div>
+          </a>
           <button onClick={() => setDark(!dark)} style={{ background: 'transparent', border: `1px solid ${border}`, borderRadius: 6, width: 30, height: 30, cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', color: muted }}>
             {dark ? '☀' : '☾'}
           </button>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <div style={{ marginLeft: 220, flex: 1, padding: '2rem 2.5rem', maxWidth: 'calc(100vw - 220px)', overflowX: 'hidden' }}>
 
         {/* HEADER */}
@@ -249,11 +243,11 @@ export default function Dashboard() {
                 <p style={{ fontSize: 10, color: muted, fontFamily: "'DM Mono',monospace", letterSpacing: '0.04em' }}>DAY STREAK</p>
               </div>
             </div>
-            <button className="btn-primary">+ New Plan</button>
+            <button className="btn-primary" onClick={() => window.location.href = '/upload'}>+ New Plan</button>
           </div>
         </div>
 
-        {/* STATS ROW */}
+        {/* STATS */}
         <div className="fade" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
           {[
             { label: 'Active Plans', value: '2', sub: '1 due this week', icon: '📅', color: accent },
@@ -274,7 +268,7 @@ export default function Dashboard() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem' }}>
 
-          {/* LEFT COLUMN */}
+          {/* LEFT */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
             {/* TODAY'S MISSION */}
@@ -288,7 +282,7 @@ export default function Dashboard() {
                   <h3 style={{ fontSize: 18, fontWeight: 600, color: text, marginBottom: 4 }}>Complete Chain Rule · Chapter 4</h3>
                   <p style={{ fontSize: 13, color: muted }}>Integration & Differentiation · Estimated 25 mins · 45% mastery → target 80%</p>
                 </div>
-                <button className="btn-primary" style={{ whiteSpace: 'nowrap' }}>Start session →</button>
+                <button className="btn-primary" style={{ whiteSpace: 'nowrap' }} onClick={() => window.location.href = '/tutor'}>Start session →</button>
               </div>
             </div>
 
@@ -296,7 +290,7 @@ export default function Dashboard() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h2 style={{ fontSize: 16, fontWeight: 600, color: text }}>Active Study Plans</h2>
-                <button className="btn-ghost" style={{ fontSize: 11 }}>View all</button>
+                <button className="btn-ghost" onClick={() => window.location.href = '/plan'}>View all</button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -308,13 +302,13 @@ export default function Dashboard() {
                         <div>
                           <h3 style={{ fontSize: 15, fontWeight: 600, color: text, marginBottom: 4 }}>{plan.title}</h3>
                           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                            <span className="tag" style={{ background: `${plan.color}18`, color: plan.color, border: `1px solid ${plan.color}30` }}>{plan.exam}</span>
-                            <span className="tag" style={{ background: bg3, color: muted, border: `1px solid ${border}` }}>Day {plan.day}/{plan.total}</span>
-                            <span className="tag" style={{ background: `${getCountdownColor(daysLeft)}18`, color: getCountdownColor(daysLeft), border: `1px solid ${getCountdownColor(daysLeft)}30` }}>{daysLeft} days left</span>
+                            <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 3, background: `${plan.color}18`, color: plan.color, border: `1px solid ${plan.color}30`, fontFamily: "'DM Mono',monospace" }}>{plan.exam}</span>
+                            <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 3, background: bg3, color: muted, border: `1px solid ${border}`, fontFamily: "'DM Mono',monospace" }}>Day {plan.day}/{plan.total}</span>
+                            <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 3, background: `${getCountdownColor(daysLeft)}18`, color: getCountdownColor(daysLeft), border: `1px solid ${getCountdownColor(daysLeft)}30`, fontFamily: "'DM Mono',monospace" }}>{daysLeft} days left</span>
                           </div>
                         </div>
                         <button className="btn-ghost" style={{ fontSize: 11 }} onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}>
-                          {selectedPlan === plan.id ? 'Hide chapters ↑' : 'View chapters ↓'}
+                          {selectedPlan === plan.id ? 'Hide ↑' : 'Chapters ↓'}
                         </button>
                       </div>
 
@@ -329,10 +323,10 @@ export default function Dashboard() {
                       </div>
 
                       {selectedPlan === plan.id && (
-                        <div style={{ borderTop: `1px solid ${border}`, paddingTop: '1rem', animation: 'fadeIn 0.3s ease' }}>
+                        <div style={{ borderTop: `1px solid ${border}`, paddingTop: '1rem' }}>
                           <p style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace", letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Chapters</p>
                           {plan.chapters_data.map((ch, ci) => (
-                            <div key={ci} className="chapter-row" onClick={() => ch.status === 'warning' || ch.mastery > 0 ? setWeakPopup(ch) : null}>
+                            <div key={ci} className="chapter-row" onClick={() => ch.mastery > 0 ? setWeakPopup(ch) : null}>
                               <div style={{ width: 8, height: 8, borderRadius: '50%', background: ch.status === 'done' ? accent : ch.status === 'active' ? '#60d4f7' : ch.status === 'warning' ? '#f97316' : border2, flexShrink: 0 }} />
                               <span style={{ flex: 1, fontSize: 13, color: ch.status === 'locked' ? muted : text }}>{ch.name}</span>
                               {ch.status === 'locked' && <span style={{ fontSize: 12 }}>🔒</span>}
@@ -350,7 +344,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
             {/* EXAM COUNTDOWNS */}
@@ -398,7 +392,10 @@ export default function Dashboard() {
 
             {/* RECENT ACTIVITY */}
             <div className="card fade">
-              <p style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace", letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1rem' }}>Recent Activity</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <p style={{ fontSize: 11, color: muted, fontFamily: "'DM Mono',monospace", letterSpacing: '0.08em', textTransform: 'uppercase' }}>Recent Activity</p>
+                <button className="btn-ghost" style={{ fontSize: 10 }} onClick={() => window.location.href = '/progress'}>View all</button>
+              </div>
               {activity.map((a, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, padding: '0.6rem 0', borderBottom: i < activity.length - 1 ? `1px solid ${border}` : 'none' }}>
                   <span style={{ fontSize: 16, flexShrink: 0 }}>{a.icon}</span>
@@ -410,18 +407,16 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </div>
 
-      {/* FLOATING ACTION BUTTON */}
-      <button style={{ position: 'fixed', bottom: '2rem', right: '2rem', width: 52, height: 52, background: accent, border: 'none', borderRadius: '50%', fontSize: 22, cursor: 'pointer', boxShadow: '0 8px 24px rgba(200,247,90,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', zIndex: 50 }}
-        onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(200,247,90,0.4)' }}
-        onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(200,247,90,0.3)' }}
-      >
-        +
-      </button>
+      {/* FLOATING BUTTON */}
+      <button style={{ position: 'fixed', bottom: '2rem', right: '2rem', width: 52, height: 52, background: accent, border: 'none', borderRadius: '50%', fontSize: 22, cursor: 'pointer', boxShadow: '0 8px 24px rgba(200,247,90,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', zIndex: 50, color: '#080808', fontWeight: 700 }}
+        onClick={() => window.location.href = '/upload'}
+        onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.1)' }}
+        onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)' }}
+      >+</button>
     </div>
   )
 }

@@ -144,8 +144,8 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             <button onClick={() => setDark(!dark)} style={{ background: 'transparent', border: `1px solid ${border}`, borderRadius: 3, width: 34, height: 34, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: muted, transition: 'all 0.2s' }}>{dark ? '☀' : '☾'}</button>
-            <button className="btn-ghost" style={{ padding: '0.5rem 1.25rem' }}>Log in</button>
-            <button className="btn-g" style={{ padding: '0.5rem 1.25rem' }}>Start free</button>
+            <button className="btn-ghost" onClick={() => window.location.href = '/auth/login'} style={{ padding: '0.5rem 1.25rem' }}>Log in</button>
+            <button className="btn-g" onClick={() => window.location.href = '/auth/signup'} style={{ padding: '0.5rem 1.25rem' }}>Start free</button>
           </div>
         </div>
       </nav>
@@ -176,7 +176,7 @@ export default function Home() {
             </p>
 
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-              <button className="btn-g">Let's begin studying →</button>
+              <button className="btn-g" onClick={() => window.location.href = '/auth/signup'} style={{ position: 'relative', zIndex: 10 }}>Let's begin studying →</button>
               <button className="btn-ghost">Watch demo</button>
             </div>
 
