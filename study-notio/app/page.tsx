@@ -118,6 +118,8 @@ export default function Home() {
         .btn-g:hover{background:#d4f96e;transform:translateY(-1px)}
         .btn-ghost{background:transparent;color:${text};border:1px solid ${border2};padding:0.75rem 1.75rem;border-radius:3px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:0.04em;transition:all 0.2s}
         .btn-ghost:hover{border-color:${muted};background:${bg3}}
+        a.btn-g{display:inline-block;text-decoration:none}
+        a.btn-ghost{display:inline-block;text-decoration:none}
         .f-card{border-top:1px solid ${border};padding:2rem 0;transition:all 0.3s;cursor:default}
         .f-card:hover .f-num{color:${accent}}
         .f-card:hover{border-top-color:${accent}}
@@ -144,8 +146,8 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             <button onClick={() => setDark(!dark)} style={{ background: 'transparent', border: `1px solid ${border}`, borderRadius: 3, width: 34, height: 34, cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: muted, transition: 'all 0.2s' }}>{dark ? '☀' : '☾'}</button>
-            <button className="btn-ghost" onClick={() => window.location.href = '/auth/login'} style={{ padding: '0.5rem 1.25rem' }}>Log in</button>
-            <button className="btn-g" onClick={() => window.location.href = '/auth/signup'} style={{ padding: '0.5rem 1.25rem' }}>Start free</button>
+            <a href="/auth/login" className="btn-ghost" style={{ padding: '0.5rem 1.25rem', textDecoration: 'none' }}>Log in</a>
+            <a href="/auth/signup" className="btn-g" style={{ padding: '0.5rem 1.25rem', textDecoration: 'none' }}>Start free</a>
           </div>
         </div>
       </nav>
@@ -154,7 +156,7 @@ export default function Home() {
       <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', padding: '8rem 3rem 6rem', position: 'relative', overflow: 'hidden', maxWidth: 1200, margin: '0 auto' }}>
 
         {/* background orb */}
-        <div style={{ position: 'fixed', top: '20%', right: '-10%', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, rgba(200,247,90,0.05) 0%, transparent 65%)`, pointerEvents: 'none', zIndex: 0 }} />
+        <div style={{ position: 'fixed', top: '20%', right: '-10%', pointerEvents: 'none', width: 600, height: 600, borderRadius: '50%', background: `radial-gradient(circle, rgba(200,247,90,0.05) 0%, transparent 65%)`, pointerEvents: 'none', zIndex: 0 }} />
 
         <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center', width: '100%' }}>
 
@@ -176,8 +178,8 @@ export default function Home() {
             </p>
 
             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-              <button className="btn-g" onClick={() => window.location.href = '/auth/signup'} style={{ position: 'relative', zIndex: 10 }}>Let's begin studying →</button>
-              <button className="btn-ghost">Watch demo</button>
+              <button className="btn-g" onClick={() => window.location.href='/auth/signup'} style={{position:'relative',zIndex:10}}>Let's begin studying →</button>
+              <button className="btn-ghost" onClick={() => window.location.href='/auth/signup'} style={{position:'relative',zIndex:10}}>Watch demo</button>
             </div>
 
             <p style={{ fontFamily: "'DM Mono',monospace", fontSize: 11, color: muted, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -396,7 +398,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <button className="btn-ghost" style={{ width: '100%' }}>Get started free</button>
+              <button className="btn-ghost" onClick={() => window.location.href='/auth/signup'} style={{width:'100%'}}>Get started free</button>
             </div>
           </Reveal>
 
@@ -479,8 +481,8 @@ export default function Home() {
               Join students from every corner of the world. Upload your first chapter in 30 seconds.
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn-g" style={{ fontSize: 15, padding: '1rem 2.5rem' }}>Let's begin studying →</button>
-              <button className="btn-ghost" style={{ fontSize: 15 }}>View pricing</button>
+              <button className="btn-g" onClick={() => window.location.href='/auth/signup'} style={{fontSize:15,padding:'1rem 2.5rem',position:'relative',zIndex:10}}>Let's begin studying →</button>
+              <a href="#pricing" className="btn-ghost" style={{fontSize:'15px',textDecoration:'none',position:'relative',zIndex:10}}>View pricing</a>
             </div>
             <p style={{ fontFamily: "'DM Mono',monospace", fontSize: 10, color: muted, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '1.75rem' }}>Free to start · No card needed · Cancel anytime</p>
           </div>
