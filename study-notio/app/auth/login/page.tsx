@@ -32,7 +32,7 @@ export default function Login() {
   }
 
   const handleKey = (e: any) => { if (e.key === 'Enter') handleLogin() }
-
+  
   return (
     <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Syne',sans-serif", padding: '2rem', position: 'relative', overflow: 'hidden' }}>
       <style>{`

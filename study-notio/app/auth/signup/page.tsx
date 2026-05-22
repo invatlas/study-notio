@@ -36,8 +36,8 @@ export default function Signup() {
     setLoading(false)
   }
 
-  const handleKey = (e) => { if (e.key === 'Enter') handleSignup() }
-
+  const handleKey = (e: any) => { if (e.key === 'Enter') handleSignup() }
+  
   if (success) return (
     <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Syne',sans-serif", position: 'relative', overflow: 'hidden' }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}`}</style>
