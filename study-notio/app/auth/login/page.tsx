@@ -1,8 +1,6 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
-
-const symbols = ['∫', 'Σ', 'π', '∂', '√', 'θ', 'λ', '∞', 'Δ', 'φ', 'α', 'β']
 
 const floats = [
   { sym: '∫', top: '8%', left: '4%', size: '2.2rem', delay: '0s', dur: '9s', op: 0.07 },
@@ -20,20 +18,29 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [focused, setFocused] = useState('')
 
   const handleLogin = async () => {
+    if (!email || !password) { setError('Please fill in all fields'); return }
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setError(error.message)
-    else window.location.href = '/dashboard'
-    setLoading(false)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      console.log('auth result:', data, error)
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      if (data?.session) {
+        window.location.replace('/dashboard')
+      }
+    } catch (e) {
+      console.error(e)
+      setError('Something went wrong. Try again.')
+      setLoading(false)
+    }
   }
 
-  const handleKey = (e: any) => { if (e.key === 'Enter') handleLogin() }
-
-  
   return (
     <div style={{ minHeight: '100vh', background: '#080808', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Syne',sans-serif", padding: '2rem', position: 'relative', overflow: 'hidden' }}>
       <style>{`
@@ -42,63 +49,53 @@ export default function Login() {
         @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes glow{0%,100%{opacity:0.4}50%{opacity:0.7}}
         .float-s{position:absolute;font-family:'DM Mono',monospace;color:#c8f75a;pointer-events:none;user-select:none;animation:floatUp var(--dur) ease-in-out var(--delay) infinite}
-        .auth-input{width:100%;background:#0f0f0f;border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:0.85rem 1rem;font-size:14px;color:#ede9e3;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+        .auth-input{width:100%;background:#0f0f0f;border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:0.85rem 1rem;font-size:14px;color:#ede9e3;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;box-sizing:border-box}
         .auth-input:focus{border-color:rgba(200,247,90,0.4);box-shadow:0 0 0 3px rgba(200,247,90,0.06)}
         .auth-input::placeholder{color:#3a3835}
         .sign-btn{width:100%;background:#c8f75a;color:#080808;border:none;border-radius:4px;padding:0.9rem;font-size:13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:0.08em;text-transform:uppercase;transition:all 0.2s}
-        .sign-btn:hover:not(:disabled){background:#d4f96e;transform:translateY(-1px);box-shadow:0 8px 24px rgba(200,247,90,0.2)}
+        .sign-btn:hover:not(:disabled){background:#d4f96e;transform:translateY(-1px)}
         .sign-btn:disabled{opacity:0.6;cursor:not-allowed}
         .card{animation:fadeIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards}
       `}</style>
 
-      {/* dot grid */}
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '28px 28px', pointerEvents: 'none' }} />
-
-      {/* glow */}
       <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,-50%)', width: 500, height: 500, background: 'radial-gradient(circle, rgba(200,247,90,0.04) 0%, transparent 65%)', pointerEvents: 'none', animation: 'glow 4s ease-in-out infinite' }} />
 
-      {/* floating symbols */}
       {floats.map((f, i) => (
-        <span key={i} className="float-s" style={{ top: f.top, left: f.left, right: f.right, fontSize: f.size, opacity: f.op, '--delay': f.delay, '--dur': f.dur }}>
+        <span key={i} className="float-s" style={{ top: f.top, left: f.left, right: (f as any).right, fontSize: f.size, opacity: f.op, ['--delay' as any]: f.delay, ['--dur' as any]: f.dur }}>
           {f.sym}
         </span>
       ))}
 
-      {/* card */}
       <div className="card" style={{ width: '100%', maxWidth: 400, position: 'relative', zIndex: 1 }}>
-
-        {/* logo */}
-        <a href="/" style={{ display: 'block', marginBottom: '2.5rem', fontFamily: "'Instrument Serif',serif", fontSize: 22, color: '#ede9e3', textDecoration: 'none', letterSpacing: '-0.01em' }}>
+        <a href="/" style={{ display: 'block', marginBottom: '2.5rem', fontFamily: "'Instrument Serif',serif", fontSize: 22, color: '#ede9e3', textDecoration: 'none' }}>
           Study<span style={{ color: '#c8f75a' }}>Notio</span>
         </a>
 
-        {/* heading */}
         <h1 style={{ fontFamily: "'Instrument Serif',serif", fontSize: '2.6rem', fontWeight: 400, color: '#ede9e3', marginBottom: '0.4rem', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
           Welcome back.
         </h1>
-        <p style={{ fontSize: 14, color: '#5a5855', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 14, color: '#5a5855', marginBottom: '2.5rem' }}>
           New here? <a href="/auth/signup" style={{ color: '#c8f75a', textDecoration: 'none', fontWeight: 500 }}>Create a free account →</a>
         </p>
 
-        {/* error */}
         {error && (
-          <div style={{ background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', borderRadius: 4, padding: '0.75rem 1rem', marginBottom: '1.25rem', fontSize: 13, color: '#ff8080', fontFamily: "'DM Mono',monospace", letterSpacing: '0.02em' }}>
+          <div style={{ background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', borderRadius: 4, padding: '0.75rem 1rem', marginBottom: '1.25rem', fontSize: 13, color: '#ff8080', fontFamily: "'DM Mono',monospace" }}>
             {error}
           </div>
         )}
 
-        {/* fields */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem' }}>
           <div>
             <label style={{ fontSize: 10, color: '#5a5855', fontFamily: "'DM Mono',monospace", letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Email</label>
-            <input className="auth-input" type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={handleKey} placeholder="you@example.com" />
+            <input className="auth-input" type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="you@example.com" />
           </div>
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <label style={{ fontSize: 10, color: '#5a5855', fontFamily: "'DM Mono',monospace", letterSpacing: '0.1em', textTransform: 'uppercase' }}>Password</label>
-              <a href="#" style={{ fontSize: 11, color: '#5a5855', textDecoration: 'none', fontFamily: "'DM Mono',monospace", letterSpacing: '0.04em' }}>Forgot?</a>
+              <a href="#" style={{ fontSize: 11, color: '#5a5855', textDecoration: 'none', fontFamily: "'DM Mono',monospace" }}>Forgot?</a>
             </div>
-            <input className="auth-input" type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={handleKey} placeholder="••••••••" />
+            <input className="auth-input" type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="••••••••" />
           </div>
         </div>
 
@@ -106,15 +103,14 @@ export default function Login() {
           {loading ? 'Signing in...' : 'Sign in →'}
         </button>
 
-        {/* divider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1.5rem 0' }}>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
           <span style={{ fontSize: 11, color: '#3a3835', fontFamily: "'DM Mono',monospace", letterSpacing: '0.06em' }}>OR</span>
           <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
         </div>
 
-        {/* google */}
-        <button onClick={async () => { await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/dashboard` } }) }} style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, padding: '0.85rem', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: "'Syne',sans-serif", color: '#ede9e3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, transition: 'all 0.2s' }}
+        <button onClick={async () => { await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/dashboard` } }) }}
+          style={{ width: '100%', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 4, padding: '0.85rem', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: "'Syne',sans-serif", color: '#ede9e3', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, transition: 'all 0.2s' }}
           onMouseOver={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
           onMouseOut={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
         >
